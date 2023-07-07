@@ -1,7 +1,7 @@
 # Structural Analysis Problem Solver
 
 Structural Analysis Problem Solver allows you to define an analysis problem and solve it. The problem consists of a
-collection of Nodes, and a collection of Elements. The goal of the Solver is to find the reaction and element forces
+collection of Nodes, and a collection of Elements. The goal of the Solver is to find the reaction and Element forces
 given the external forces and support conditions.
 
 ## Notations
@@ -12,9 +12,9 @@ given the external forces and support conditions.
 
 #### Properties
 
-```x, y, z``` Position of node\
-```Fx, Fy, Fz, Mx, My, Mz``` Force exerted on node in global coordinates\
-```r``` Rigidity flag of node in global coordinates
+```x, y, z``` Position of Node\
+```Fx, Fy, Fz, Mx, My, Mz``` External force exerted on Node in global coordinates\
+```r``` Rigidity flag of Node in global coordinates
 
 ### Element
 
@@ -22,11 +22,15 @@ given the external forces and support conditions.
 
 #### Properties
 
-```n0, n1``` Nodes at the ends of element\
-```S``` Cross-section of element (assumed prismatic)\
-```M``` Material of element (assumed prismatic)\
+```n0, n1``` Nodes at the ends of Element\
+```S``` Cross-section of Element (assumed prismatic)\
+```M``` Material of Element (assumed prismatic)\
 ```theta``` Angle by which the cross-section is rotated\
-```r``` Rigidity flag of element in local coordinates
+```r``` Rigidity flag of Element in local coordinates
+
+### Sections
+
+>(To be added)
 
 ## Analysis parameters
 
@@ -34,7 +38,7 @@ given the external forces and support conditions.
 
 #### Nodes
 
-The force/displacement space of each node is a 6-dimensional vector field, with the following basis axes:
+The force/displacement space of each Node is a 6-dimensional vector field, with the following basis axes:
 
 0. Translational x-axis in global coordinate system
 1. Translational y-axis in global coordinate system
@@ -45,22 +49,22 @@ The force/displacement space of each node is a 6-dimensional vector field, with 
 
 #### Elements
 
-The force/displacement space of each element is a 12-dimensional vector field, with the following basis axes:
+The force/displacement space of each Element is a 12-dimensional vector field, with the following basis axes:
 
-0. Translational x-axis at node 0 in local coordinate system (_axial direction; the direction from node 0 to node 1_)
-1. Translational y-axis at node 0 in local coordinate system (_shear direction; the cross product of local z and local
+0. Translational x-axis at Node 0 in local coordinate system (_axial direction; the direction from Node 0 to Node 1_)
+1. Translational y-axis at Node 0 in local coordinate system (_shear direction; the cross product of local z and local
    x, rotated about local x by ```theta```_)
-2. Translational z-axis at node 0 in local coordinate system (_shear direction; the normalized cross product of local x
+2. Translational z-axis at Node 0 in local coordinate system (_shear direction; the normalized cross product of local x
    and global z if they are not parallel, the global z itself otherwise, rotated about local x by ```theta```_)
-3. Rotational x-axis at node 0 in local coordinate system (_torsional direction_)
-4. Rotational y-axis at node 0 in local coordinate system (_flexural direction_)
-5. Rotational z-axis at node 0 in local coordinate system (_flexural direction_)
-6. Translational x-axis at node 1 in local coordinate system
-7. Translational y-axis at node 1 in local coordinate system
-8. Translational z-axis at node 1 in local coordinate system
-9. Rotational x-axis at node 1 in local coordinate system
-10. Rotational y-axis at node 1 in local coordinate system
-11. Rotational z-axis at node 1 in local coordinate system
+3. Rotational x-axis at Node 0 in local coordinate system (_torsional direction_)
+4. Rotational y-axis at Node 0 in local coordinate system (_flexural direction_)
+5. Rotational z-axis at Node 0 in local coordinate system (_flexural direction_)
+6. Translational x-axis at Node 1 in local coordinate system
+7. Translational y-axis at Node 1 in local coordinate system
+8. Translational z-axis at Node 1 in local coordinate system
+9. Rotational x-axis at Node 1 in local coordinate system
+10. Rotational y-axis at Node 1 in local coordinate system
+11. Rotational z-axis at Node 1 in local coordinate system
 
 ### Rigidity flags
 
@@ -68,14 +72,14 @@ The rigidity flag, ```r```, of a Node or an Element is defined as $\displaystyle
 $r_i$ is $1$ if the Node is supported or the Element is connected to the joint at the corresponding end in the direction
 of $i$-th axis, and $0$ otherwise.
 
-Note that all 6 dimensions of each Node must be constrained by either a support or an element. Likewise, all 12
+Note that all 6 dimensions of each Node must be constrained by either a support or an Element. Likewise, all 12
 dimensions of each Element must be constrained by a joint. Other cases of geometric instabilities must be prevented when
 you define an analysis problem. Otherwise, the structure will be unstable and fail to support the loads.
 
-_In case you are confused with rotational instability of nodes or axial/torsional instability of usual truss or frame
-elements in a specific problem, and you are not sure how to define supports and joints, I would suggest you to begin
-with fixing all nodes rotationally in all directions you have already fixed them translationally, and to fix all
-elements axially and torsionally at both ends as well. Of course, this is not a general recommendation, but only for
+_In case you are confused with rotational instability of Nodes or axial/torsional instability of usual truss or frame
+Elements in a specific problem, and you are not sure how to define supports and joints, I would suggest you to begin
+with fixing all Nodes rotationally in all directions you have already fixed them translationally, and to fix all
+Elements axially and torsionally at both ends as well. Of course, this is not a general recommendation, but only for
 those who are new to defining 3-dimensional truss and frame problems._
 
 #### Examples
@@ -96,7 +100,29 @@ those who are new to defining 3-dimensional truss and frame problems._
 ## Result
 
 The result of the analysis is printed in the console when the Solver runs. It contains the displacement of and forces
-exerted on each node, including the reaction forces, in global coordinates, and the member forces in local coordinates.
+exerted on each Node, including the reaction forces, in global coordinates, and the member forces in local coordinates.
+
+## Solution
+
+### Theory
+#### Assumptions
+* Static analysis (zero acceleration and relative speed)
+* Equilibrium rather than stability (ignoring buckling, vibration, etc.)
+* Linear elasticity of material
+* Linearized displacements (assuming high stiffness, ignoring higher-order displacements)
+* Negligibility of shear deformations
+#### Method
+The Direct Stiffness Method is implemented in this solution.
+### Implementation
+#### Solver's problem definition domain
+* Node-element problems
+* Rectilinear prismatic elements
+* No initial strains
+* No thermal strains
+* No inclined restraints
+* No loads between nodes
+* No spring supports or joints, except definable as rectilinear elements
+* No other constraints between displacements or forces
 
 ## Example
 

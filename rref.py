@@ -1,6 +1,6 @@
 import numpy as np
 
-# Source: https://gist.github.com/sgsfak/77a1c08ac8a9b0af77393b24e44c9547
+# Credits: https://gist.github.com/sgsfak/77a1c08ac8a9b0af77393b24e44c9547
 
 def rref(B, tol=1e-8, debug=False):
     A = B.copy()
