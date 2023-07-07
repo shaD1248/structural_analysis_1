@@ -64,7 +64,7 @@ The force/displacement space of each element is a 12-dimensional vector field, w
 
 ### Rigidity flags
 
-The rigidity flag, ```r```, of a Node or an Element is defined as $\sum_{i=0}^n r_i\cdot2^i$, where $r_i$ is $1$ if the
+The rigidity flag, ```r```, of a Node or an Element is defined as $\sum_{i=0}^{n-1} r_i\cdot2^i$, where $r_i$ is $1$ if the
 Node is supported or the Element is connected to the joint at the corresponding end in the direction of $i$-th axis, and
 $0$ otherwise.
 
