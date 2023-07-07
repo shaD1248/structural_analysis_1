@@ -127,3 +127,16 @@ elements = Collection([
     Element(nodes.get(1), nodes.get(2), my_section, steel, 0, 0o7777),
 ])
 test_data_sets.append({'nodes': nodes, 'elements': elements})
+
+# Data Set 5 (Simply supported beam with a point force)
+
+nodes = Collection([
+    Node([0, 0, 0], [0, 0, 0, 0, 0, 0], 0o77),
+    Node([5, 0, 0], [0, 0, -6, 0, 0, 0], 0o00),
+    Node([10, 0, 0], [0, 0, 0, 0, 0, 0], 0o66),
+])
+elements = Collection([
+    Element(nodes.get(0), nodes.get(1), my_section, steel, 0, 0o7717),
+    Element(nodes.get(1), nodes.get(2), my_section, steel, 0, 0o1777),
+])
+test_data_sets.append({'nodes': nodes, 'elements': elements})

@@ -112,9 +112,10 @@ class Analyzer:
         message = 'The stiffness matrix is singular. The structure is unstable.'
         eig = np.linalg.eig(A)
         x = [i for i in range(0, len(self.displacements))] @ self.f
+        eigenvalues = self.zero(eig.eigenvalues)
         eigenvectors = []
-        for i in range(0, len(eig.eigenvalues)):
-            if eig.eigenvalues[i] == 0:
+        for i in range(0, len(eigenvalues)):
+            if eigenvalues[i] == 0:
                 eigenvectors.append(eig.eigenvectors[i])
         eigenvectors_rref, _, _ = rref.rref(np.array(eigenvectors))
         for eigenvector in eigenvectors_rref:
