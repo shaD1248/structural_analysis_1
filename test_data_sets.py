@@ -55,7 +55,7 @@ test_data_sets.append({'nodes': nodes, 'elements': elements})
 
 nodes = Collection([
     Node([0, 0, 0], [0, 0, 0, 0, 0, 0], 0o77),
-    Node([1, 0, 0], [0, 0, 1, 0, 0, 0], 0o00),
+    Node([1, 0, 0], [0, 0, -1, 0, 0, 0], 0o00),
 ])
 elements = Collection([
     Element(nodes.get(0), nodes.get(1), my_section, steel, 0, 0o7777),

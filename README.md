@@ -64,9 +64,9 @@ The force/displacement space of each element is a 12-dimensional vector field, w
 
 ### Rigidity flags
 
-The rigidity flag, ```r```, of a Node or an Element is defined as $\sum_{i=0}^{n-1} r_i\cdot2^i$, where $r_i$ is $1$ if the
-Node is supported or the Element is connected to the joint at the corresponding end in the direction of $i$-th axis, and
-$0$ otherwise.
+The rigidity flag, ```r```, of a Node or an Element is defined as $\displaystyle r=\sum_{i=0}^{n-1} r_i\cdot2^i$, where
+$r_i$ is $1$ if the Node is supported or the Element is connected to the joint at the corresponding end in the direction
+of $i$-th axis, and $0$ otherwise.
 
 Note that all 6 dimensions of each Node must be constrained by either a support or an element. Likewise, all 12
 dimensions of each Element must be constrained by a joint. Other cases of geometric instabilities must be prevented when
@@ -83,12 +83,12 @@ those who are new to defining 3-dimensional truss and frame problems._
 * Nodes
     * Free Nodes: ```r = 0b000000 = 0o00 = 0```
     * Nodes with roller and pin supports
-        * Fixed in translational and rotational x-axis: ```r = 0b001001 = 0o11 = 9```
-        * Fixed in translational and rotational y-axis: ```r = 0b010010 = 0o22 = 18```
-        * Fixed in translational and rotational z-axis: ```r = 0b100100 = 0o44 = 36```
-        * Fixed in translational and rotational x-axis and rotational y-axis: ```r = 0b001011 = 0o13 = 11```
-        * Fixed in translational and rotational x-axis and y-axis: ```r = 0b011011 = 0o33 = 27```
-        * Fixed in translational and rotational x-, y-, and z-axis: ```r = 0b111111 = 0o77 = 63```
+        * Supported in translational and rotational x-axis: ```r = 0b001001 = 0o11 = 9```
+        * Supported in translational and rotational y-axis: ```r = 0b010010 = 0o22 = 18```
+        * Supported in translational and rotational z-axis: ```r = 0b100100 = 0o44 = 36```
+        * Supported in translational and rotational x-axis and rotational y-axis: ```r = 0b001011 = 0o13 = 11```
+        * Supported in translational and rotational x-axis and y-axis: ```r = 0b011011 = 0o33 = 27```
+        * Supported in translational and rotational x-, y-, and z-axis: ```r = 0b111111 = 0o77 = 63```
 * Elements
     * Hinged at both ends, with independently stable joints: ```r = 0b001111001111 = 0o1717```
     * Fixed at Node 0 and free at Node 1: ```r = 0b111111111111 = 0o7777```
@@ -97,3 +97,53 @@ those who are new to defining 3-dimensional truss and frame problems._
 
 The result of the analysis is printed in the console when the Solver runs. It contains the displacement of and forces
 exerted on each node, including the reaction forces, in global coordinates, and the member forces in local coordinates.
+
+## Example
+
+### Code
+
+```
+from analyzer import Analyzer
+from collection import Collection
+from element import Element
+from material import Material
+from node import Node
+from section import Section
+
+steel = Material(200, 0.3)
+my_section = Section(1, 1, 1, 1)
+nodes = Collection([
+    Node([0, 0, 0], [0, 0, 0, 0, 0, 0], 0o77),
+    Node([1, 0, 0], [0, 0, -1, 0, 0, 0], 0o00),
+])
+elements = Collection([
+    Element(nodes.get(0), nodes.get(1), my_section, steel, 0, 0o7777),
+])
+analysis = Analyzer(nodes.list, elements.list)
+analysis.analyze()
+```
+
+### Result
+
+```
+Nodes
+                          Displacement  Force
+displacement 0 of node 0      0.000000    0.0
+displacement 1 of node 0      0.000000    0.0
+displacement 2 of node 0      0.000000    1.0
+displacement 3 of node 0      0.000000    0.0
+displacement 4 of node 0      0.000000   -1.0
+displacement 5 of node 0      0.000000    0.0
+displacement 0 of node 1      0.000000    0.0
+displacement 1 of node 1      0.000000    0.0
+displacement 2 of node 1     -0.001667   -1.0
+displacement 3 of node 1      0.000000    0.0
+displacement 4 of node 1      0.002500    0.0
+displacement 5 of node 1      0.000000    0.0
+
+Elements
+   Force 0  Force 1  Force 2  Force 3  Force 4  Force 5  Force 6  Force 7  \
+0      0.0      1.0      0.0      0.0      0.0      1.0      0.0     -1.0   
+   Force 8  Force 9  Force 10  Force 11  
+0      0.0      0.0       0.0       0.0  
+```
