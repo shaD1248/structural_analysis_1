@@ -17,6 +17,7 @@ class Analyzer:
         self.generate_partitioning_matrices()
         self.generate_forces_matrix()
         self.calculate_displacements()
+        self.calculate_element_displacements()
         self.calculate_element_forces()
         self.print_results()
 
@@ -127,6 +128,14 @@ class Analyzer:
                     message += '\n+ ' + str(component) + ' * (' + self.displacements[displacement_id].__str__() + ')'
             message += ' = 0'
         raise Exception(message)
+
+    def calculate_element_displacements(self):
+        self.element_D = []
+        for element in self.elements:
+            i = element.id
+            K = element.get_K()
+            D = self.zero(self.T[i] @ self.D)
+            self.element_D.append(D)
 
     def calculate_element_forces(self):
         self.element_P = []

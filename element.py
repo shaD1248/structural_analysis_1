@@ -44,7 +44,7 @@ class Element(CollectionItem):
             Z = np.cross(X, [0, 0, 1])
             Z = Z / np.linalg.norm(Z)
         else:
-            Z = [0, 0, 1]
+            Z = [1, 0, 0]
         Y = np.cross(Z, X)
         theta_rad = math.radians(self.theta)
         cos = math.cos(theta_rad)
