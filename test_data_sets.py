@@ -87,3 +87,31 @@ elements = Collection([
     Element(nodes.get(1), nodes.get(2), my_section, steel, 0, 0o1777),
 ])
 test_data_sets.append({'nodes': nodes, 'elements': elements})
+
+# Frame
+
+def get_frame(spans, stories):
+    global nodes, elements
+    nodes = Collection(
+        [Node([i, 0, j], [2, 0, -1, 0, 0, 0], 0o77 * (j == 0)) for j in range(0, stories + 1) for i in
+         range(0, spans + 1)]
+    )
+    elements = Collection(
+        [Element(
+            nodes.get(i),
+            nodes.get(i + spans + 1),
+            my_section, steel, 0, 0o7777
+        ) for i in range(0, (spans + 1) * stories)] +
+        [Element(
+            nodes.get(i + i // spans + spans + 1),
+            nodes.get(i + i // spans + spans + 2),
+            my_section, steel, 0, 0o7777
+        ) for i in range(0, spans * stories)],
+    )
+    return nodes, elements
+
+
+# Data Set 6 (3x3 Frame)
+
+nodes, elements = get_frame(3, 3)
+test_data_sets.append({'nodes': nodes, 'elements': elements})
